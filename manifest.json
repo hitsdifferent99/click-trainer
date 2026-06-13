@@ -1,0 +1,14 @@
+{
+  "name": "Click Trainer — Victoria Drums",
+  "short_name": "Click Trainer",
+  "description": "Smart click track trainer for drummers. Practice with moving tempos and build song maps.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
