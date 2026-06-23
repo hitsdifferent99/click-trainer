@@ -246,8 +246,36 @@ select:focus,input:focus{border-color:var(--pu)}
       <span class="albl">bars</span>
     </div>
     <div class="afrow">
-      <select id="newTrend" onchange="onTrendChange()" style="flex:1"><option value="s">Steady</option><option value="f">Speeding up</option><option value="l">Slowing down</option></select>
-      <input type="number" id="newEndBpm" value="130" min="40" max="300" style="width:72px;display:none" placeholder="End BPM">
+      <select id="newTrend" onchange="onTrendChange()" style="flex:1">
+        <option value="fixed">Fixed — locked tempo</option>
+        <option value="ramp">Ramp — bounces between two BPMs</option>
+        <option value="change">Change — tempo shifts smoothly across section</option>
+        <option value="slow">Slow — gradually winds down</option>
+        <option value="chaos">Chaos — unpredictable, direction reverses at random</option>
+      </select>
+    </div>
+    <!-- secondary options per mode -->
+    <div id="mapopt-ramp" style="display:none" class="afrow">
+      <input type="number" id="newRampMin" value="90" min="40" max="300" style="width:60px" placeholder="Min">
+      <span class="albl">min BPM</span>
+      <input type="number" id="newRampMax" value="130" min="40" max="300" style="width:60px" placeholder="Max">
+      <span class="albl">max BPM</span>
+    </div>
+    <div id="mapopt-change" style="display:none" class="afrow">
+      <span class="albl" style="white-space:normal;color:var(--t3)">Start BPM is set above. End BPM:</span>
+      <input type="number" id="newEndBpm" value="130" min="40" max="300" style="width:64px" placeholder="End BPM">
+    </div>
+    <div id="mapopt-slow" style="display:none" class="afrow">
+      <span class="albl" style="white-space:normal;color:var(--t3)">Wind down to:</span>
+      <input type="number" id="newSlowBpm" value="80" min="40" max="300" style="width:64px" placeholder="End BPM">
+    </div>
+    <div id="mapopt-chaos" style="display:none">
+      <div style="font-size:11px;color:var(--rd);padding:4px 0 2px;line-height:1.5">Chaos is like Change but the direction reverses unpredictably mid-section. Harder than anything else on this list — use it when you want to be genuinely tested.</div>
+      <div class="afrow">
+        <span class="albl">Range either side:</span>
+        <input type="number" id="newChaosRange" value="20" min="5" max="60" style="width:60px">
+        <span class="albl">BPM</span>
+      </div>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
       <button class="btn-gh" onclick="loadExample()">Load example</button>
@@ -646,7 +674,18 @@ function renderMapList(){
   }).join('');
 }
 function loadExample(){
-  songMap=[{section:'intro',label:'Intro',bpm:95,bars:4,trend:'s',endBpm:95},{section:'verse',label:'Verse 1',bpm:95,bars:8,trend:'s',endBpm:95},{section:'prechorus',label:'Pre-chorus',bpm:95,bars:4,trend:'f',endBpm:104},{section:'chorus',label:'Chorus',bpm:104,bars:8,trend:'s',endBpm:104},{section:'verse',label:'Verse 2',bpm:104,bars:8,trend:'s',endBpm:104},{section:'prechorus',label:'Pre-chorus',bpm:104,bars:4,trend:'f',endBpm:112},{section:'chorus',label:'Chorus',bpm:112,bars:8,trend:'s',endBpm:112},{section:'bridge',label:'Bridge',bpm:112,bars:8,trend:'l',endBpm:96},{section:'chorus',label:'Final chorus',bpm:96,bars:8,trend:'f',endBpm:116},{section:'outro',label:'Outro',bpm:116,bars:4,trend:'l',endBpm:90}];
+  songMap=[
+    {section:'intro',label:'Intro',bpm:95,bars:4,trend:'fixed',endBpm:95,rampMin:80,rampMax:110,chaosRange:15,_rampDir:1,_rampBpm:95,_chaosNext:3},
+    {section:'verse',label:'Verse 1',bpm:95,bars:8,trend:'ramp',endBpm:95,rampMin:88,rampMax:102,chaosRange:15,_rampDir:1,_rampBpm:88,_chaosNext:3},
+    {section:'prechorus',label:'Pre-chorus',bpm:95,bars:4,trend:'change',endBpm:104,rampMin:80,rampMax:110,chaosRange:15,_rampDir:1,_rampBpm:95,_chaosNext:3},
+    {section:'chorus',label:'Chorus',bpm:104,bars:8,trend:'fixed',endBpm:104,rampMin:80,rampMax:120,chaosRange:15,_rampDir:1,_rampBpm:104,_chaosNext:3},
+    {section:'verse',label:'Verse 2',bpm:104,bars:8,trend:'ramp',endBpm:104,rampMin:96,rampMax:112,chaosRange:15,_rampDir:1,_rampBpm:96,_chaosNext:3},
+    {section:'prechorus',label:'Pre-chorus',bpm:104,bars:4,trend:'change',endBpm:112,rampMin:80,rampMax:120,chaosRange:15,_rampDir:1,_rampBpm:104,_chaosNext:3},
+    {section:'chorus',label:'Chorus',bpm:112,bars:8,trend:'fixed',endBpm:112,rampMin:80,rampMax:120,chaosRange:15,_rampDir:1,_rampBpm:112,_chaosNext:3},
+    {section:'bridge',label:'Bridge',bpm:112,bars:8,trend:'chaos',endBpm:96,rampMin:80,rampMax:130,chaosRange:22,_rampDir:1,_rampBpm:112,_chaosNext:2},
+    {section:'chorus',label:'Final chorus',bpm:96,bars:8,trend:'change',endBpm:116,rampMin:80,rampMax:120,chaosRange:15,_rampDir:1,_rampBpm:96,_chaosNext:3},
+    {section:'outro',label:'Outro',bpm:116,bars:4,trend:'slow',endBpm:90,rampMin:80,rampMax:120,chaosRange:15,_rampDir:1,_rampBpm:116,_chaosNext:3}
+  ];
   renderMapList();showTab('map',null,'map');
 }
 function showTab(name,tabEl,navId){
